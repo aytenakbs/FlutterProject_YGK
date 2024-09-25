@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ygk_project/pages/home.dart';
+import 'package:ygk_project/pages/defaultPage.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -16,6 +17,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        debugShowCheckedModeBanner: false, home: HomePage());
+        debugShowCheckedModeBanner: false,
+        home: DefaultPage()
+    );
   }
 }

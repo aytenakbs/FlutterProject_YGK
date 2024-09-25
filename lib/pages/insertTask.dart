@@ -1,37 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:ygk_project/models/category.dart';
 import 'package:ygk_project/constants/colors.dart';
+import 'package:ygk_project/constants/taskType.dart';
+
 import 'package:ygk_project/widgets/dateFieldExpanded.dart';
+
 
 class InsertTaskPage extends StatelessWidget {
   const InsertTaskPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Category> categories = [
-      Category(name: "Work", icon: Icons.work, color: AppColors.thirdColor),
-      Category(
-          name: "Fitness",
-          icon: Icons.fitness_center,
-          color: AppColors.thirdColor),
-      Category(name: "Home", icon: Icons.home, color: AppColors.thirdColor),
-      Category(name: "Study", icon: Icons.school, color: AppColors.thirdColor),
-    ];
 
     double deviceHeight = MediaQuery.of(context).size.height;
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.secondColor,
+    return Scaffold(
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           toolbarHeight: deviceHeight / 10,
-          backgroundColor: AppColors.firstColor,
+          backgroundColor: AppColors.greenColor,
           leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
           ),
           title: const Text(
-            "Create a Task",
+            "Yeni Görev Oluştur",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 25,
@@ -47,7 +39,7 @@ class InsertTaskPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Task Title",
+                  "Başlık:",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
@@ -63,7 +55,7 @@ class InsertTaskPage extends StatelessWidget {
                   ),
                 ),
                 const Text(
-                  "Category",
+                  "Kategori:",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -79,7 +71,7 @@ class InsertTaskPage extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               duration: const Duration(milliseconds: 400),
-                              content: Text("${category.name} category selected"),
+                              content: Text("${category.name} kategorisi seçildi."),
                             ),
                           );
                         },
@@ -102,8 +94,8 @@ class InsertTaskPage extends StatelessWidget {
                 ),
                 const Row(
                   children: [
-                    DateFieldExpanded(text: "Date:"),
-                    DateFieldExpanded(text: "Time:")
+                    DateFieldExpanded(text: "Tarih:"),
+                    DateFieldExpanded(text: "Zaman:"),
                   ],
                 ),
                 const SizedBox(height: 15),
@@ -111,7 +103,7 @@ class InsertTaskPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Notes:",
+                      "Notlar:",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -137,23 +129,24 @@ class InsertTaskPage extends StatelessWidget {
                 const SizedBox(height: 15),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-
-                    },
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
                     ),
-                    child: const Text("Save",style:TextStyle(
-                      fontSize: 20,
-                    )),
+                    child: const Text(
+                      "Kaydet",
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ),
-      ),
     );
+
   }
 }

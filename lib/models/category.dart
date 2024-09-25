@@ -5,9 +5,5 @@ class Category {
   final IconData icon;
   final Color color;
 
-  Category({
-    required this.name,
-    required this.icon,
-    required this.color,
-  });
+  Category({required this.name, required this.icon, required this.color});
 }

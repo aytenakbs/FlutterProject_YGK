@@ -12,30 +12,46 @@ class CustomAppBar extends StatelessWidget {
     String formattedDate = "${now.day}.${now.month}.${now.year}";
 
     return Container(
-      color: AppColors.firstColor,
       width: deviceWidth,
-      height: deviceHeight / 5,
-      child: Column(
+      height: deviceHeight / 3,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 25),
-            child: Text(
-              "Habit Chain App",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 35,
-                  fontWeight: FontWeight.bold),
+
+          Opacity(
+            opacity: 0.7, // Burada opaklık seviyesini belirliyorsun
+            child: const Image(
+              image: AssetImage("lib/assets/images/foto1.jpeg"),
+              fit: BoxFit.cover,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Text(
-              formattedDate,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+
+          Container(
+            color: AppColors.lightGrayColor.withOpacity(0.7), // Arka planda renk ve opaklık
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 25),
+                  child: Text(
+                    "Hedefler",
+                    style: TextStyle(
+                        color: AppColors.darkGrayColor,
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Text(
+                    formattedDate,
+                    style: const TextStyle(
+                      color: AppColors.darkGrayColor,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

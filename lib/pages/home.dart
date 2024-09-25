@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ygk_project/constants/taskType.dart';
+import 'package:ygk_project/models/task.dart';
 import 'package:ygk_project/pages/insertTask.dart';
 import '../widgets/customAppBar.dart';
 import '../constants/colors.dart';
@@ -12,39 +14,54 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> todo = [
-    "Study lessons",
-    "Read a book",
-    "Go for a walk",
-    "Work out for 1 hour",
-    "Ride a bike"
+
+  List<Task> tasks=[
+    Task(type: TaskType.drop, title: "Su tasarrufu yap", description: "Diş fırçalarken veya bulaşık yıkarken suyu boşa akıtma.", isCompleted: false),
+    Task(type: TaskType.power, title: "Enerji Verimliliği Sağlamak", description: "Kullanmadığın odalardaki ışıkları kapat, enerji tasarruflu ampuller kullan.",  isCompleted: false),
+    Task(type: TaskType.nature, title: "Daha Az Kağıt Kullanmak", description: "Dijital faturalar ve notlar kullanarak kağıt israfını önlemek.",  isCompleted: false),
+
   ];
 
-  List<String> completedTasks = [
-    "Drink 2L water",
-    "Sort garbage",
-    "Solve a puzzle",
+  List<Task> completedTasks = [
+    Task(type: TaskType.plastic, title: "Plastik Kullanımını Azaltmak", description: "Alışverişlerde bez çanta kullanmak, plastik şişe ve torbalardan kaçınmak.",  isCompleted: false),
+    Task(type: TaskType.recycle, title: "Geri Dönüşüm Yapmak", description: "Kağıt, cam, plastik ve metal atıkları ayrıştırmak.",  isCompleted: false),
+
   ];
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-          backgroundColor: AppColors.secondColor,
+
+        home: Scaffold(
+          appBar: AppBar(
+
+backgroundColor: AppColors.whiteColor,
+            leading: IconButton(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Icons.arrow_back, size: 30, color: AppColors.darkGrayColor),
+            ),
+            title: const Text(
+              "Günlük Hedefler",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30,
+                color:AppColors.darkGrayColor,
+              ),
+            ),
+            centerTitle: true,
+          ),
+          backgroundColor: AppColors.whiteColor,
           body: Column(
             children: [
-
-              const CustomAppBar(),
 
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: ListView.builder(
-                    itemCount: todo.length,
+                    itemCount: tasks.length,
                     itemBuilder: (context, index) {
-                      return ToDoItem(title: todo[index]);
+                      return ToDoItem(task: tasks[index],);
                     },
                   ),
                 ),
@@ -55,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.only(left: 20),
                 child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("Completed",
+                    child: Text("Tamamlananlar:",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 25))),
               ),
@@ -66,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                   child: ListView.builder(
                     itemCount: completedTasks.length,
                     itemBuilder: (context, index) {
-                      return ToDoItem(title: completedTasks[index]);
+                      return ToDoItem(task: completedTasks[index],);
                     },
                   ),
                 ),
@@ -85,13 +102,13 @@ class _HomePageState extends State<HomePage> {
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
                   ),
-                  child: const Text("Add A New Task"),
+                  child: const Text("Yeni Görev Ekle"),
                 ),
               )
             ],
           ),
         ),
-      ),
+
     );
   }
 }
