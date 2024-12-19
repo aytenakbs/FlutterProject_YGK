@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'profilPage.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: UpdateProfilePage(),
-    );
-  }
-}
 
 class UpdateProfilePage extends StatefulWidget {
   @override
@@ -21,15 +10,37 @@ class UpdateProfilePage extends StatefulWidget {
 
 class _UpdateProfilePageState extends State<UpdateProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _surnameController = TextEditingController();
-  TextEditingController _dobController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _cityController = TextEditingController();
-  TextEditingController _currentPasswordController = TextEditingController();
-  TextEditingController _newPasswordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _updateProfile() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      // Firebase Firestore güncellemesi
+      await _firestore.collection('users').doc('user_id').update({
+        'email': _emailController.text,
+        'password': _passwordController.text, // Şifreler genelde şifrelenir
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profil başarıyla güncellendi')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Güncelleme başarısız: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,30 +53,23 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         centerTitle: true,
         backgroundColor: const Color(0xFF8EB486),
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white, // Okun beyaz olması için
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => ProfilPage(), // ProfilPage'e yönlendirme
-              ),
+              MaterialPageRoute(builder: (context) => ProfilPage()),
             );
           },
         ),
       ),
-
       body: Stack(
         children: [
-          // Arka plan resmi
           Opacity(
             opacity: 0.8,
             child: Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/woman.jpeg'), // Arka plan resmi
+                  image: AssetImage('assets/images/woman.jpeg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -78,37 +82,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               child: ListView(
                 children: [
                   TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Adınız'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Lütfen adınızı girin';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _surnameController,
-                    decoration: const InputDecoration(labelText: 'Soyadınız'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Lütfen soyadınızı girin';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _dobController,
-                    decoration: const InputDecoration(labelText: 'Doğum Tarihiniz (GG/AA/YY)'),
-                    keyboardType: TextInputType.datetime,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Lütfen doğum tarihinizi girin';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
                     controller: _emailController,
                     decoration: const InputDecoration(labelText: 'E-posta'),
                     keyboardType: TextInputType.emailAddress,
@@ -120,41 +93,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                     },
                   ),
                   TextFormField(
-                    controller: _phoneController,
-                    decoration: const InputDecoration(labelText: 'Telefon'),
-                    keyboardType: TextInputType.phone,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Lütfen telefon numaranızı girin';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _cityController,
-                    decoration: const InputDecoration(labelText: 'Şehir'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Lütfen şehirinizi girin';
-                      }
-                      return null;
-                    },
-                  ),
-                  // Mevcut Şifre
-                  TextFormField(
-                    controller: _currentPasswordController,
-                    decoration: const InputDecoration(labelText: 'Mevcut Şifreniz'),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Lütfen mevcut şifrenizi girin';
-                      }
-                      return null;
-                    },
-                  ),
-                  // Yeni Şifre
-                  TextFormField(
-                    controller: _newPasswordController,
+                    controller: _passwordController,
                     decoration: const InputDecoration(labelText: 'Yeni Şifre'),
                     obscureText: true,
                     validator: (value) {
@@ -164,35 +103,13 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                       return null;
                     },
                   ),
-                  // Yeni Şifreyi Onayla
-                  TextFormField(
-                    controller: _confirmPasswordController,
-                    decoration: const InputDecoration(labelText: 'Yeni Şifreyi Onayla'),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Lütfen yeni şifrenizi onaylayın';
-                      }
-                      if (value != _newPasswordController.text) {
-                        return 'Şifreler uyuşmuyor';
-                      }
-                      return null;
-                    },
-                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        // Profil ve şifre güncelleme işlemi yapılabilir
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Profil başarıyla güncellendi')),
-                        );
-                      }
-                    },
+                    onPressed: _updateProfile,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1F4529),
                     ),
-                    child: const Text('Güncelle',style:TextStyle(color:Colors.white)),
+                    child: const Text('Güncelle', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),

@@ -5,9 +5,10 @@ import 'package:ygk_project/constants/taskType.dart';
 import 'package:ygk_project/pages/chainPage.dart';
 import 'package:ygk_project/pages/home.dart';
 import 'package:ygk_project/pages/informingPage.dart';
-import 'package:ygk_project/pages/profilPage.dart'; // Profil sayfasını ekledik
+import 'package:ygk_project/pages/profilPage.dart';
+import 'package:ygk_project/pages/solucanOyunu.dart';
 import 'package:ygk_project/widgets/transparentCard.dart';
-import 'package:ygk_project/pages/game.dart'; // Doğa Kurtarma Oyunu sayfasını ekledik
+import 'package:ygk_project/pages/game.dart';
 
 class DefaultPage extends StatefulWidget {
   const DefaultPage({super.key});
@@ -20,33 +21,38 @@ class _DefaultPageState extends State<DefaultPage> {
   // Görevler ve tamamlanan görevler listesi
   List<Task> tasks = [
     Task(
-        type: TaskType.drop,
-        title: "Su tasarrufu yap",
-        description: "Diş fırçalarken veya bulaşık yıkarken suyu boşa akıtma.",
-        isCompleted: false),
+      type: TaskType.drop,
+      title: "Su tasarrufu yap",
+      description: "Diş fırçalarken veya bulaşık yıkarken suyu boşa akıtma.",
+      isCompleted: false,
+    ),
     Task(
-        type: TaskType.power,
-        title: "Enerji Verimliliği Sağlamak",
-        description:
-        "Kullanmadığın odalardaki ışıkları kapat, enerji tasarruflu ampuller kullan.",
-        isCompleted: false),
+      type: TaskType.power,
+      title: "Enerji Verimliliği Sağlamak",
+      description:
+      "Kullanmadığın odalardaki ışıkları kapat, enerji tasarruflu ampuller kullan.",
+      isCompleted: false,
+    ),
     Task(
-        type: TaskType.nature,
-        title: "Daha Az Kağıt Kullanmak",
-        description:
-        "Dijital faturalar ve notlar kullanarak kağıt israfını önlemek.",
-        isCompleted: false),
+      type: TaskType.nature,
+      title: "Daha Az Kağıt Kullanmak",
+      description:
+      "Dijital faturalar ve notlar kullanarak kağıt israfını önlemek.",
+      isCompleted: false,
+    ),
     Task(
-        type: TaskType.plastic,
-        title: "Plastik Kullanımını Azaltmak",
-        description:
-        "Alışverişlerde bez çanta kullanmak, plastik şişe ve torbalardan kaçınmak.",
-        isCompleted: false),
+      type: TaskType.plastic,
+      title: "Plastik Kullanımını Azaltmak",
+      description:
+      "Alışverişlerde bez çanta kullanmak, plastik şişe ve torbalardan kaçınmak.",
+      isCompleted: false,
+    ),
     Task(
-        type: TaskType.recycle,
-        title: "Geri Dönüşüm Yapmak",
-        description: "Kağıt, cam, plastik ve metal atıkları ayrıştırmak.",
-        isCompleted: false),
+      type: TaskType.recycle,
+      title: "Geri Dönüşüm Yapmak",
+      description: "Kağıt, cam, plastik ve metal atıkları ayrıştırmak.",
+      isCompleted: false,
+    ),
   ];
 
   List<Task> completedTasks = [];
@@ -78,15 +84,13 @@ class _DefaultPageState extends State<DefaultPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => TreeGame()),
+                MaterialPageRoute(builder: (context) =>  GameScreen()),
               );
             },
           ),
           actions: [
             IconButton(
-              icon: const Icon(
-                Icons.manage_accounts,
-              ),
+              icon: const Icon(Icons.manage_accounts),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -103,12 +107,22 @@ class _DefaultPageState extends State<DefaultPage> {
                           .chain(CurveTween(curve: curve));
                       var offsetAnimation = animation.drive(tween);
 
-                      // Şeffaflık animasyonu
                       return SlideTransition(
-                          position: offsetAnimation,
-                          child: FadeTransition(opacity: animation, child: child));
+                        position: offsetAnimation,
+                        child: FadeTransition(opacity: animation, child: child),
+                      );
                     },
                   ),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.play_arrow, color: Colors.blue),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SolucanOyunu()),
                 );
               },
             ),

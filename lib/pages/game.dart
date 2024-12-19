@@ -1,84 +1,183 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
-class TreeGame extends StatefulWidget {
-  @override
-  _TreeGameState createState() => _TreeGameState();
+void main() {
+  runApp(SustainabilityGameApp());
 }
 
-class _TreeGameState extends State<TreeGame> {
-  int score = 0; // Oyuncunun puanı
-  int leaves = 5; // Kalan yaprak sayısı
+class SustainabilityGameApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: GameScreen(),
+    );
+  }
+}
+
+class GameScreen extends StatefulWidget {
+  @override
+  _GameScreenState createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  bool _isGameStarted = false;
+  int _tapCount = 0;
+  DateTime? _lastPlayDate;
+  List<String> _treeImages = [
+    'assets/tree1.png',
+    'assets/tree2.png',
+    'assets/tree3.png',
+    'assets/tree4.png',
+    'assets/tree5.png',
+    'assets/tree6.png',
+    'assets/tree7.png',
+    'assets/tree8.png',
+    'assets/tree9.png',
+    'assets/tree10.png',
+  ];
+  int _currentTreeIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGameData();
+  }
+
+  Future<void> _loadGameData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? lastPlayDateString = prefs.getString('lastPlayDate');
+    int? tapCount = prefs.getInt('tapCount');
+
+    if (lastPlayDateString != null) {
+      _lastPlayDate = DateTime.parse(lastPlayDateString);
+    }
+
+    if (_lastPlayDate != null &&
+        _lastPlayDate!.day == DateTime.now().day &&
+        tapCount != null) {
+      _tapCount = tapCount;
+    } else {
+      _resetGame();
+    }
+
+    setState(() {});
+  }
+
+  Future<void> _saveGameData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastPlayDate', DateTime.now().toIso8601String());
+    await prefs.setInt('tapCount', _tapCount);
+  }
+
+  void _resetGame() {
+    _tapCount = 0;
+    _currentTreeIndex = 0;
+    _lastPlayDate = DateTime.now();
+  }
+
+  void _onButtonTap() {
+    if (_tapCount < 10) {
+      setState(() {
+        _tapCount++;
+        _currentTreeIndex = (_currentTreeIndex + 1) % _treeImages.length;
+      });
+      _saveGameData();
+    }
+
+    if (_tapCount == 10) {
+      _showGameCompleteDialog();
+    }
+  }
+
+  void _showGameCompleteDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Oyun Tamamlandı'),
+        content: Text('Bugün için maksimum tıklama hakkına ulaştınız.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('Tamam'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Doğa Kurtarma Oyunu'),
-        centerTitle: true,
-        backgroundColor: Colors.green,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Üst kısım: Puan ve Yaprak sayısı
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Puan: $score',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Stack(
+        children: [
+          if (!_isGameStarted)
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(50),
+                  backgroundColor: Colors.blue,
+                  elevation: 8,
                 ),
-                Text(
-                  'Yapraklar: $leaves',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            // Orta kısım: Ağaç görseli
-            Expanded(
-              child: Center(
-                child: Image.asset(
-                  'assets/tree.png', // Ağacın görseli
-                  height: 300,
-                  fit: BoxFit.contain,
+                onPressed: () {
+                  setState(() {
+                    _isGameStarted = true;
+                  });
+                },
+                child: Text(
+                  'OYUNA BAŞLA',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-            // Alt kısım: Aksiyon butonları
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _actionButton('Su Ver', Colors.blue, 'water'),
-                _actionButton('Güneş Ver', Colors.orange, 'sun'),
-                _actionButton('Gübre Ver', Colors.brown, 'fertilizer'),
-              ],
+          if (_isGameStarted)
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/background.jpg'), // Arka plan resmi
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Image.asset(
+                      _treeImages[_currentTreeIndex],
+                      width: 200,
+                      height: 200,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _onButtonTap,
+                        child: Text('Su'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _onButtonTap,
+                        child: Text('Güneş'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _onButtonTap,
+                        child: Text('Gübre'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+        ],
       ),
     );
-  }
-
-  // Aksiyon butonu için bir yardımcı widget
-  Widget _actionButton(String label, Color color, String action) {
-    return ElevatedButton(
-      onPressed: () => performAction(action),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  // Aksiyon butonuna basıldığında yapılacaklar
-  void performAction(String action) {
-    // Şimdilik sadece aksiyonun adı yazdırılıyor
-    print('$action butonuna basıldı!');
   }
 }

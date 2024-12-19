@@ -9,11 +9,10 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
-  final String name = "Ayşe Fatma";
+
   final String email = "ayfat@gmail.com";
-  final String phoneNumber = "5396137980";
-  final String birthDate = "07/03/1991";
-  final String address = "Adana, Türkiye";
+  final String password = "ayfat@gmail.com";
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,15 +42,12 @@ class _ProfilPageState extends State<ProfilPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildCard('Ad Soyad: $name'), // Ad Soyad kartı
-                const SizedBox(height: 16),
+
                 _buildCard('Email: $email'), // Email kartı
                 const SizedBox(height: 16),
-                _buildCard('Telefon: $phoneNumber'), // Telefon kartı
+                _buildCard('Şifre: $password'), // Email kartı
                 const SizedBox(height: 16),
-                _buildCard('Doğum Tarihi: $birthDate'), // Doğum Tarihi kartı
-                const SizedBox(height: 16),
-                _buildCard('Adres: $address'), // Adres kartı
+
                 const Spacer(), // Kalan alanı doldurur
                 Center(
                   child: ElevatedButton(
