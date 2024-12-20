@@ -7,6 +7,8 @@ class CompletedTasksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final completedTaskCount = tasks.length; // Tamamlanan görev sayısı
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -14,7 +16,11 @@ class CompletedTasksPage extends StatelessWidget {
         elevation: 0,
         title: const Text(
           'Tamamlanan Görevler',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -24,11 +30,13 @@ class CompletedTasksPage extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          // Arka plan resmi
+          // Tüm sayfayı kapsayan arka plan
           Container(
+            height: double.infinity,
+            width: double.infinity,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/background.jpg'), // Arka plan resmi yolu
+                image: AssetImage('lib/assets/images/grass-6783054_1920.jpg'), // Resim yolu
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
                   Colors.black.withOpacity(0.3),
@@ -40,7 +48,7 @@ class CompletedTasksPage extends StatelessWidget {
           // İçerik
           Column(
             children: [
-              const SizedBox(height: 80), // AppBar altında boşluk
+              const SizedBox(height: 80), // AppBar'ın altındaki boşluk
               Expanded(
                 child: tasks.isEmpty
                     ? const Center(
@@ -57,7 +65,13 @@ class CompletedTasksPage extends StatelessWidget {
                       color: Colors.white.withOpacity(0.9),
                       margin: const EdgeInsets.all(8.0),
                       child: ListTile(
-                        leading: Icon(task.icon, color: Colors.green),
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            task.icon,
+                            color: Colors.green,
+                          ),
+                        ),
                         title: Text(task.title),
                         subtitle: Text(task.description),
                       ),
@@ -93,6 +107,18 @@ class CompletedTasksPage extends StatelessWidget {
                       },
                     ),
                   ],
+                ),
+              ),
+              // Tamamlanan görev sayısı
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Tamamlanan Görev Sayısı: $completedTaskCount',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ygk_project/constants/colors.dart';
 import 'package:ygk_project/models/informingText.dart';
-import 'package:ygk_project/widgets/informingCard.dart';
 
-class InformingPage extends StatelessWidget {
+class InformingPage extends StatefulWidget {
   const InformingPage({Key? key}) : super(key: key);
 
-  // Her kart için ayrı metin ve görsel yolu.
+  @override
+  _InformingPageState createState() => _InformingPageState();
+}
+
+class _InformingPageState extends State<InformingPage> {
+  int? hoveredIndex;
+
   final List<InformingText> informingDataList = const [
     InformingText(
       text: "Su kaynaklarımız sınırlıdır ve su tasarrufu yaparak çevreye önemli bir katkı sağlayabiliriz. Basit adımlarla suyun daha verimli kullanılmasını sağlayarak, hem doğaya hem de ekonomiye fayda sağlayabiliriz.",
@@ -19,6 +24,7 @@ class InformingPage extends StatelessWidget {
         'Gri suyu yeniden kullanma sistemleri (duş/bulaşık suyu ile tuvaletleri yıkamak) kullanın.',
       ],
       imagePath: 'lib/assets/images/drop-1066410_1920.jpg',
+
     ),
 
     InformingText(
@@ -114,29 +120,133 @@ class InformingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:AppColors.whiteColor,
+      backgroundColor: AppColors.lightGrayColor,
       appBar: AppBar(
-        backgroundColor:AppColors.whiteColor,
-        title: const Text('    Neler Yapabilirim',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color: AppColors.darkGrayColor),),
+        backgroundColor: AppColors.whiteColor.withOpacity(0.2),
+        title: const Text(
+          '             Neler Yapabilirim',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: Colors.black87),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: AppColors.darkGrayColor),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-
       ),
-      body: SingleChildScrollView(
+      body: ListView.builder(
+        itemCount: informingDataList.length,
+        itemBuilder: (context, index) {
+          final data = informingDataList[index];
+          final isHovered = hoveredIndex == index;
 
+          return MouseRegion(
+            onEnter: (_) => setState(() => hoveredIndex = index),
+            onExit: (_) => setState(() => hoveredIndex = null),
+            child: GestureDetector(
+              onTap: () {
+                // Düğmeye tıklanıldığında tam ekran gösterimi için yeni bir sayfa açıyoruz
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailPage(data: data),
+                  ),
+                );
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: isHovered ? 300 : 200, // Hover durumunda yükseklik artır
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                      child: Image.asset(
+                        data.imagePath,
+                        fit: BoxFit.cover,
+                        height: 120,
+                        width: double.infinity,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        data.text,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                        maxLines: 2, // Normal durumda sadece 2 satır göster
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Detay sayfasını tanımlıyoruz
+class DetailPage extends StatelessWidget {
+  final InformingText data;
+
+  const DetailPage({Key? key, required this.data}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.lightGrayColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.lightGrayColor.withOpacity(0.5),
+        title: const Text('           Detay'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          children: informingDataList.map((data) {
-            return InformingCard(
-              text: data.text,
-              bulletPoints: data.bulletPoints,
-              imagePath: data.imagePath,
-              opacityValue: 0.5,
-            );
-          }).toList(),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                data.imagePath,
+                fit: BoxFit.cover,
+                height: 220,
+                width: double.infinity,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              data.text,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            // Madde noktalarını listeleyelim
+            Expanded(
+              child: ListView.builder(
+                itemCount: data.bulletPoints.length,
+                itemBuilder: (context, bulletPointIndex) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text('• ${data.bulletPoints[bulletPointIndex]}'),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
