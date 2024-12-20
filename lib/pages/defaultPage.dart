@@ -43,7 +43,7 @@ class DefaultPage extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => TaskListPage(tasks: [])),
+                              MaterialPageRoute(builder: (context) => TaskListPage()),
                             );
                           },
                           style: ElevatedButton.styleFrom(
