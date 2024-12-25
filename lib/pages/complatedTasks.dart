@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'taskListPage.dart';
 
 class CompletedTasksPage extends StatelessWidget {
   final List<Task> tasks;
 
-  CompletedTasksPage({required this.tasks});
+  const CompletedTasksPage({required this.tasks});
 
   @override
   Widget build(BuildContext context) {
@@ -30,22 +31,14 @@ class CompletedTasksPage extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          // Tüm sayfayı kapsayan arka plan
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/assets/images/grass-6783054_1920.jpg'), // Resim yolu
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  Colors.black.withOpacity(0.3),
-                  BlendMode.darken,
-                ),
-              ),
+          Positioned.fill(
+            child: Image.asset(
+              'lib/assets/images/grass-6783054_1920.jpg',
+              fit: BoxFit.cover,
+              colorBlendMode: BlendMode.darken,
+              color: Colors.black.withOpacity(0.3),
             ),
           ),
-          // İçerik
           Column(
             children: [
               const SizedBox(height: 80), // AppBar'ın altındaki boşluk
@@ -79,37 +72,6 @@ class CompletedTasksPage extends StatelessWidget {
                   },
                 ),
               ),
-              // Alt butonlar
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildCircularButton(
-                      icon: Icons.water_drop,
-                      color: Colors.blue.withOpacity(0.7),
-                      onTap: () {
-                        // Su butonuna tıklanınca yapılacaklar
-                      },
-                    ),
-                    _buildCircularButton(
-                      icon: Icons.wb_sunny,
-                      color: Colors.orange.withOpacity(0.7),
-                      onTap: () {
-                        // Güneş butonuna tıklanınca yapılacaklar
-                      },
-                    ),
-                    _buildCircularButton(
-                      icon: Icons.grass,
-                      color: Colors.green.withOpacity(0.7),
-                      onTap: () {
-                        // Gübre butonuna tıklanınca yapılacaklar
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              // Tamamlanan görev sayısı
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -127,31 +89,4 @@ class CompletedTasksPage extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildCircularButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 60,
-        width: 60,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: color,
-        ),
-        child: Icon(icon, color: Colors.white, size: 30),
-      ),
-    );
-  }
-}
-
-class Task {
-  final String title;
-  final String description;
-  final IconData icon;
-
-  Task({required this.title, required this.description, required this.icon});
 }

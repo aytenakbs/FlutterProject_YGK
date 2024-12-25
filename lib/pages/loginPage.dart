@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           // Arka plan resmi ve opacity
           Opacity(
-            opacity: 0.6, // Opaklık değeri
+            opacity: 0.8, // Opaklık değeri
             child: Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
@@ -73,14 +73,24 @@ class _LoginPageState extends State<LoginPage> {
           Center(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(18.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Uygulama adı
+                    const Text(
+                      'EcoBliss',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     // Yarı saydam inputlar
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white54.withOpacity(0.8),
                         borderRadius: BorderRadius.circular(16), // Oval kenarlar
                       ),
                       child: TextField(
@@ -94,10 +104,10 @@ class _LoginPageState extends State<LoginPage> {
                         keyboardType: TextInputType.emailAddress,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: TextField(
@@ -105,19 +115,19 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: const InputDecoration(
                           labelText: 'Şifre',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
                           ),
                         ),
                         obscureText: true,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 13),
                     if (errorMessage != null)
                       Text(
                         errorMessage!,
-                        style: const TextStyle(color: Colors.red),
+                        style: const TextStyle(color: Colors.teal),
                       ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 13),
                     ElevatedButton(
                       onPressed: () {
                         if (isLogin) {
@@ -127,10 +137,18 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                       child: isLogin
-                          ? const Text('Giriş Yap')
-                          : const Text('Kayıt Ol'),
+                          ? const Text('Giriş Yap',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.black))
+                          : const Text('Kayıt Ol',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.black)),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 13),
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -142,7 +160,10 @@ class _LoginPageState extends State<LoginPage> {
                         isLogin
                             ? 'Henüz hesabınız yok mu? Tıklayın!'
                             : 'Zaten hesabınız var mı? Giriş Yapın!',
-                        style: const TextStyle(color: Colors.blue),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15),
                       ),
                     ),
                   ],

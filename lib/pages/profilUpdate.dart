@@ -48,12 +48,12 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       appBar: AppBar(
         title: const Text(
           'Profil Güncelleme',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black54),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF8EB486),
+        backgroundColor: const Color(0x80428B42), // %50 şeffaflık
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.grey),
           onPressed: () {
             Navigator.push(
               context,
@@ -62,17 +62,19 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           },
         ),
       ),
+
       body: Stack(
         children: [
-          Opacity(
-            opacity: 0.8,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/woman.jpeg'),
-                  fit: BoxFit.cover,
-                ),
+          // Arka plana opak resim ekleniyor
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/woman.jpeg'), // Resim dosyasının yolu
+                fit: BoxFit.cover, // Resmi tam ekrana yayar
               ),
+            ),
+            child: Container(
+              color: Colors.lightGreen.withOpacity(0.4), // Opaklık eklemek için renk ve şeffaflık
             ),
           ),
           Padding(
@@ -107,9 +109,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                   ElevatedButton(
                     onPressed: _updateProfile,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1F4529),
+                      backgroundColor: const Color(0xFFF1F8E9),
                     ),
-                    child: const Text('Güncelle', style: TextStyle(color: Colors.white)),
+                    child: const Text('Güncelle', style: TextStyle(color: Colors.black54)),
                   ),
                 ],
               ),

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
+import 'package:ygk_project/pages/complatedTasks.dart';
 
 class Task {
   final String title;
@@ -12,6 +16,20 @@ class Task {
     required this.icon,
     this.isCompleted = false,
   });
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'description': description,
+    'icon': icon.codePoint,
+    'isCompleted': isCompleted,
+  };
+
+  static Task fromJson(Map<String, dynamic> json) => Task(
+    title: json['title'],
+    description: json['description'],
+    icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
+    isCompleted: json['isCompleted'],
+  );
 }
 
 class TaskListPage extends StatefulWidget {
@@ -29,14 +47,37 @@ class _TaskListPageState extends State<TaskListPage> {
     Task(title: 'Enerji Tasarruflu Ampuller Kullan', description: 'LED ampulleri tercih et.', icon: Icons.lightbulb),
     Task(title: 'Plastik Şişe Yerine Matara Kullan', description: 'Dışarıda içme suyu için yeniden kullanılabilir matara kullan.', icon: Icons.local_drink),
     Task(title: 'Elektronikleri Prizden Çek', description: 'Kullanılmayan elektronik cihazların fişini çek.', icon: Icons.power_off),
-    Task(title: 'Yerel Ürün Satın Al', description: 'Yerel pazarlardan veya çiftçilerden alışveriş yap.', icon: Icons.shopping_cart_outlined),
     Task(title: 'Kağıt İsrafını Azalt', description: 'Çift taraflı yazdırma seçeneğini kullan veya dijital notlar al.', icon: Icons.document_scanner),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTaskCompletionStatus();
+  }
+
+  Future<void> _saveTaskCompletionStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksJson = tasks.map((task) => task.toJson()).toList();
+    await prefs.setString('tasks', json.encode(tasksJson));
+  }
+
+  Future<void> _loadTaskCompletionStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksString = prefs.getString('tasks');
+    if (tasksString != null) {
+      final tasksJson = json.decode(tasksString) as List;
+      setState(() {
+        tasks = tasksJson.map((task) => Task.fromJson(task)).toList();
+      });
+    }
+  }
 
   void toggleTaskCompletion(int index) {
     setState(() {
       tasks[index].isCompleted = !tasks[index].isCompleted;
     });
+    _saveTaskCompletionStatus();
   }
 
   @override
@@ -44,85 +85,71 @@ class _TaskListPageState extends State<TaskListPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.white.withOpacity(0.8),
+        backgroundColor: Colors.black.withOpacity(0.5),
         elevation: 0,
         centerTitle: true,
         title: const Text(
           'Günlük Görevler',
-          style: TextStyle(color: Colors.black87, fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CompletedTasksPage(
-                      tasks: tasks.where((task) => task.isCompleted).toList(),
-                    ),
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CompletedTasksPage(
+                    tasks: tasks.where((task) => task.isCompleted).toList(),
                   ),
-                );
-              },
-              child: CircleAvatar(
-                backgroundColor: Colors.green,
-                child: const Icon(Icons.check, color: Colors.white),
-              ),
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),
       body: Stack(
         children: [
-          // Background image
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/assets/images/grass-6783054_1920.jpg'),
-                fit: BoxFit.cover,
-              ),
+          // Arka plan resmi
+          Positioned.fill(
+            child: Image.asset(
+              'lib/assets/images/grass-6783054_1920.jpg', // Arka plan görsel yolu
+              fit: BoxFit.cover,
+              colorBlendMode: BlendMode.darken,
+              color: Colors.black.withOpacity(0.3),
             ),
           ),
-          // Task list content
           ListView.builder(
-            padding: const EdgeInsets.only(top: 100),
+            padding: const EdgeInsets.only(top: 80),
             itemCount: tasks.length,
             itemBuilder: (context, index) {
               final task = tasks[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(12),
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                color: Colors.white.withOpacity(0.9),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(12),
+                  leading: Icon(
+                    task.icon,
+                    color: task.isCompleted ? Colors.green : Colors.grey,
+                    size: 32,
                   ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(12),
-                    leading: Icon(
-                      task.icon,
-                      color: task.isCompleted ? Colors.green : Colors.grey,
-                      size: 32,
+                  title: Text(
+                    task.title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    title: Text(
-                      task.title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(task.description),
-                    trailing: Checkbox(
-                      value: task.isCompleted,
-                      activeColor: Colors.green,
-                      onChanged: (value) {
-                        toggleTaskCompletion(index);
-                      },
-                    ),
+                  ),
+                  subtitle: Text(task.description),
+                  trailing: Checkbox(
+                    value: task.isCompleted,
+                    activeColor: Colors.green,
+                    onChanged: (value) => toggleTaskCompletion(index),
                   ),
                 ),
               );
@@ -132,37 +159,4 @@ class _TaskListPageState extends State<TaskListPage> {
       ),
     );
   }
-}
-
-class CompletedTasksPage extends StatelessWidget {
-  final List<Task> tasks;
-
-  const CompletedTasksPage({required this.tasks});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tamamlanmış Görevler'),
-      ),
-      body: ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index) {
-          final task = tasks[index];
-          return ListTile(
-            leading: Icon(Icons.check, color: Colors.green),
-            title: Text(task.title),
-            subtitle: Text(task.description),
-          );
-        },
-      ),
-    );
-  }
-}
-
-void main() {
-  runApp(MaterialApp(
-    theme: ThemeData(primarySwatch: Colors.green),
-    home: TaskListPage(),
-  ));
 }

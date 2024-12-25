@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'profilUpdate.dart'; // Güncelleme sayfasının dosyası
-
+import 'defaultPage.dart';
 class ProfilPage extends StatefulWidget {
   const ProfilPage({super.key});
 
@@ -13,64 +13,85 @@ class _ProfilPageState extends State<ProfilPage> {
   final String email = "ayfat@gmail.com";
   final String password = "ayfat@gmail.com";
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profilim'),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF8EB486),
-      ),
-      body: Stack(
-        children: [
-          // Arka plan resmi
-          Opacity(
-            opacity: 0.8,
-            child: Container(
+    return WillPopScope( // Bu widget, geri tuşuna basıldığında özelleştirilmiş bir işlem yapılmasını sağlar
+      onWillPop: () async {
+        // Burada geri tuşuna basıldığında yapılacak işlemi belirtiyoruz
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => DefaultPage()), // DefaultPage, ana sayfanız olmalı
+              (route) => false, // Yönlendirmeyi yığının en başına yapıyoruz
+        );
+        return Future.value(false); // Bu, geri tuşunun normal işleyişini engeller
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Profilim'),
+          centerTitle: true,
+          backgroundColor: const Color(0x803C883C),
+        ),
+        body: Stack(
+          children: [
+            // Arka plan resmi
+            // Arka plana opak resim ekleniyor
+            Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/woman.jpeg'),
-                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/woman.jpeg'), // Resim dosyasının yolu
+                  fit: BoxFit.cover, // Resmi tam ekrana yayar
+                ),
+              ),
+              child: Container(
+                color: Colors.lightGreen.withOpacity(0.4), // Opaklık eklemek için renk ve şeffaflık
+              ),
+            ),
+            Opacity(
+              opacity: 0.8,
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/woman.jpeg'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-          ),
-          // Kartlar ve buton
-          Padding(
-            padding: const EdgeInsets.all(17.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+            // Kartlar ve buton
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
 
-                _buildCard('Email: $email'), // Email kartı
-                const SizedBox(height: 16),
-                _buildCard('Şifre: $password'), // Email kartı
-                const SizedBox(height: 16),
+                  _buildCard('Email: $email'), // Email kartı
+                  const SizedBox(height: 14),
+                  _buildCard('Şifre: $password'), // Şifre kartı
+                  const SizedBox(height: 14),
 
-                const Spacer(), // Kalan alanı doldurur
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => UpdateProfilePage()), // const ifadesi kaldırıldı
-
-                      ); // Güncelleme sayfasına geçiş
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1F4529),
-                    ),
-                    child: const Text(
-                      'Profil Güncelle',
-                      style: TextStyle(color: Colors.white),
+                  const Spacer(), // Kalan alanı doldurur
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => UpdateProfilePage()), // Güncelleme sayfasına geçiş
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF1F8E9),
+                      ),
+                      child: const Text(
+                        'Profil Güncelle',
+                        style: TextStyle(color: Colors.black54),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

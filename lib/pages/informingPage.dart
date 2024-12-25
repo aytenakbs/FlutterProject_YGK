@@ -124,8 +124,8 @@ class _InformingPageState extends State<InformingPage> {
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor.withOpacity(0.2),
         title: const Text(
-          '             Neler Yapabilirim',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: Colors.black87),
+          '              Neler Yapabilirim',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: Colors.black),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.darkGrayColor),
